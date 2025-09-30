@@ -1,0 +1,1872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prahil - Journey Through the Quantum Grid</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+            --accent: #2563eb;
+            --muted: #64748b;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1a1a1a;
+            --text-secondary: #64748b;
+            --border-color: rgba(37, 99, 235, 0.2);
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('cybersecurity-bg.svg') repeat;
+            opacity: 0.08;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Background Texts */
+        .background-texts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .cyber {
+            position: absolute;
+            top: 25%;
+            left: 25%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(5rem, 10vw, 15rem);
+            font-weight: 900;
+            color: rgba(37, 99, 235, 0.05);
+            text-shadow: 0 0 50px rgba(37, 99, 235, 0.1);
+        }
+
+        .security {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(10rem, 20vw, 30rem);
+            font-weight: 900;
+            color: rgba(37, 99, 235, 0.05);
+            text-shadow: 0 0 50px rgba(37, 99, 235, 0.1);
+        }
+
+        .analyst {
+            position: absolute;
+            top: 75%;
+            left: 75%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(5rem, 10vw, 15rem);
+            font-weight: 900;
+            color: rgba(37, 99, 235, 0.05);
+            text-shadow: 0 0 50px rgba(37, 99, 235, 0.1);
+        }
+
+        body.dark-mode .cyber,
+        body.dark-mode .security,
+        body.dark-mode .analyst {
+            color: rgba(96, 165, 250, 0.05);
+            text-shadow: 0 0 50px rgba(96, 165, 250, 0.1);
+        }
+
+        /* Dark theme colors */
+        body.dark-mode {
+            background: #0f172a;
+            color: #f1f5f9;
+            --accent: #60a5fa;
+            --muted: #94a3b8;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(96, 165, 250, 0.2);
+        }
+
+        /* Minimalist Particles Background */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .nav {
+            background: rgb(39, 125, 133);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--text-primary);
+            text-shadow: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        /* Pages */
+        .page {
+            min-height: 100vh;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 70px 50px 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .page.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Specific page height adjustments */
+        #home {
+            min-height: 100vh;
+            height: auto;
+            align-items: flex-start;
+            padding-top: 100px;
+        }
+
+        #about {
+            min-height: 100vh;
+            height: auto;
+            align-items: flex-start;
+            padding-top: 100px;
+        }
+
+        #projects {
+            min-height: 100vh;
+            height: auto;
+            align-items: flex-start;
+            padding-top: 100px;
+        }
+
+        #skills {
+            min-height: 100vh;
+            height: auto;
+            align-items: flex-start;
+            padding-top: 100px;
+        }
+
+        #contact {
+            min-height: 100vh;
+            height: auto;
+            align-items: flex-start;
+            padding-top: 100px;
+        }
+
+        /* Landing Page */
+        .hero-section {
+            text-align: center;
+            max-width: 800px;
+            margin-top: 10vh;
+        }
+
+        .hero-name {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 900;
+            color: var(--accent);
+            margin-bottom: 20px;
+            animation: subtleGlow 3s ease-in-out infinite alternate;
+            text-shadow: 0 0 20px rgba(37, 99, 235, 0.5);
+        }
+
+        body.dark-mode .hero-name {
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+        }
+
+        @keyframes subtleGlow {
+            0% { opacity: 0.9; }
+            100% { opacity: 1; }
+        }
+
+        .hero-tagline {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .enter-grid-btn {
+            padding: 15px 40px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .enter-grid-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+
+        body.dark-mode .enter-grid-btn:hover {
+            box-shadow: 0 10px 25px rgba(96, 165, 250, 0.3);
+        }
+
+        /* Film Roll */
+        .film-roll {
+            position: relative;
+            margin-top: 60px;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            opacity: 0.7;
+            pointer-events: auto;
+        }
+
+        .film-strip {
+            display: flex;
+            gap: 20px;
+            animation: scrollFilm 20s linear infinite;
+        }
+
+        .film-strip:hover {
+            animation-play-state: paused;
+        }
+
+        .certificate {
+            flex-shrink: 0;
+            width: 200px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .certificate:hover {
+            transform: scale(1.05);
+        }
+
+        body.dark-mode .certificate {
+            background: rgba(15, 23, 42, 0.1);
+            border: 2px solid var(--border-color);
+        }
+
+        body.dark-mode .certificate:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+            box-shadow: 0 8px 20px rgba(96, 165, 250, 0.3);
+        }
+
+        .certificate img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes scrollFilm {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Certificate Modal */
+        .certificate-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .certificate-modal.active {
+            display: flex;
+        }
+
+        .certificate-modal img {
+            max-width: 80%;
+            max-height: 80%;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .certificate-modal .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 20px;
+            color: black;
+        }
+
+        /* Skill Modal */
+        .skill-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 10000;
+        }
+
+        .skill-modal.active {
+            display: block;
+        }
+
+        .skill-modal h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .skill-modal p {
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .skill-modal .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        /* About Page */
+        .about-container {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            max-width: 1200px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .photo-container {
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        @media (max-width: 768px) {
+            .photo-container { justify-content: center; }
+        }
+
+        .photo-frame {
+            width: 240px;
+            height: 300px;
+            border-radius: 20px;
+            background: none;
+            padding: 0;
+            position: relative;
+            display: grid;
+            grid-template-rows: 240px auto;
+            justify-items: center;
+            align-items: start;
+            gap: 12px;
+        }
+        .photo-frame .photo { 
+            border-radius: 50%; 
+            background: var(--bg-secondary); 
+        }
+        .social-mini { display: flex; gap: 10px; }
+        .social-mini-btn {
+            display: inline-flex; align-items:center; justify-content:center;
+            min-width: 36px; height: 36px; padding: 0 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--accent);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s ease;
+            text-decoration: none;
+        }
+        .social-mini-btn:hover { 
+            transform: translateY(-2px); 
+            background: var(--accent);
+            color: white;
+        }
+
+        .photo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+        }
+        .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .photo:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+        }
+
+        /* Personal Info */
+        .personal-info {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px 24px;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(37, 99, 235, 0.1);
+        }
+
+        body.dark-mode .personal-info {
+            box-shadow: 0 0 30px rgba(96, 165, 250, 0.1);
+        }
+
+        .personal-info:hover {
+            box-shadow: 0 0 50px rgba(37, 99, 235, 0.3);
+        }
+
+        body.dark-mode .personal-info:hover {
+            box-shadow: 0 0 50px rgba(96, 165, 250, 0.3);
+        }
+        
+        .personal-info h3 {
+            font-family:'Orbitron', monospace;
+            color: var(--accent);
+            margin-bottom:10px;
+        }
+        .personal-info ul { 
+            list-style:none; 
+            padding-left:0; 
+            line-height:1.8; 
+            margin:0;
+            color: var(--text-primary);
+        }
+
+        .about-content h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+        }
+
+        body.dark-mode .about-content h2 {
+            text-shadow: 0 0 15px rgba(96, 165, 250, 0.4);
+        }
+
+        .timeline-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-left: 3px solid var(--accent);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .timeline-item:hover {
+            background: var(--bg-secondary);
+            transform: translateX(10px);
+            box-shadow: 0 5px 20px rgba(37, 99, 235, 0.1);
+        }
+
+        body.dark-mode .timeline-item:hover {
+            box-shadow: 0 5px 20px rgba(96, 165, 250, 0.1);
+        }
+
+        .timeline-item h3 {
+            color: var(--text-primary);
+        }
+
+        .timeline-item p {
+            color: var(--text-secondary);
+        }
+
+        /* New About Layout */
+        .about-container {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            max-width: 1200px;
+            width: 100%;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .info-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            width: 100%;
+        }
+
+        .who-am-i-film {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(37, 99, 235, 0.1);
+        }
+
+        body.dark-mode .who-am-i-film {
+            box-shadow: 0 0 30px rgba(96, 165, 250, 0.1);
+        }
+
+        .timeline-film {
+            display: flex;
+            gap: 20px;
+            animation: scrollWhoAmI 30s linear infinite;
+        }
+
+        .timeline-film:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scrollWhoAmI {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Floating film roll behind photo spanning full width */
+        .floating-film-roll {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            opacity: 0.8;
+            pointer-events: auto;
+        }
+
+        .floating-film-roll .timeline-film {
+            animation: scrollWhoAmI 20s linear infinite;
+        }
+
+        .floating-film-roll:hover .timeline-film {
+            animation-play-state: paused;
+        }
+
+        .floating-film-roll .timeline-item {
+            margin: 0 20px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            backdrop-filter: blur(5px);
+        }
+
+        .floating-film-roll .timeline-item:hover {
+            background: rgba(37, 99, 235, 0.2);
+            transform: scale(1.05);
+        }
+
+        .floating-film-roll.bottom {
+            top: 150px;
+            height: 180px;
+        }
+
+        .floating-film-roll.bottom .film-strip {
+            animation: scrollFilm 40s linear infinite;
+        }
+
+        .floating-film-roll .film-strip {
+            animation: scrollFilm 20s linear infinite;
+        }
+
+        .floating-film-roll:hover .film-strip {
+            animation-play-state: paused;
+        }
+
+
+        /* Redesign Personal Info */
+        .personal-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .personal-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .personal-item:hover {
+            border-color: var(--accent);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.1);
+        }
+
+        body.dark-mode .personal-item:hover {
+            box-shadow: 0 5px 15px rgba(96, 165, 250, 0.1);
+        }
+
+        .personal-item strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Projects Page */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .project-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.1);
+        }
+
+        body.dark-mode .project-card:hover {
+            box-shadow: 0 20px 40px rgba(96, 165, 250, 0.1);
+        }
+
+        .project-card h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .project-card p {
+            color: var(--text-secondary);
+        }
+
+        .tech-stack {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        /* Skills Page */
+        .skills-container { 
+            max-width: 900px; 
+            width: 100%; 
+            margin: 0 auto; 
+            text-align: center; 
+        }
+        .skills-container h2 {
+            font-family: 'Orbitron', monospace;
+            color: var(--accent);
+            margin-bottom: 24px;
+            text-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+        }
+
+        body.dark-mode .skills-container h2 {
+            text-shadow: 0 0 15px rgba(96, 165, 250, 0.4);
+        }
+        .skills-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 24px; 
+            align-items: start; 
+        }
+        .skill-item {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            padding: 12px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .skill-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+            border-color: var(--accent);
+            background: rgba(37, 99, 235, 0.1);
+        }
+        .skill-circle { 
+            --size: 72px; 
+            position: relative; 
+            width: var(--size); 
+            height: var(--size); 
+            border-radius: 50%; 
+            background: transparent; 
+            box-shadow: inset 0 0 0 2px var(--border-color); 
+        }
+        .skill-text { flex: 1; }
+        .skill-name { 
+            font-weight: 700; 
+            margin-bottom: 8px; 
+            color: var(--text-primary);
+        }
+        .skill-bar { 
+            position: relative; 
+            height: 8px; 
+            background: var(--border-color); 
+            border-radius: 6px; 
+            overflow: hidden; 
+        }
+        .skill-bar > span {
+            display: block;
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 2s ease;
+        }
+        .skill-circle img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .skill-circle span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            z-index: 1;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        @media (max-width: 768px) {
+            .skills-grid { grid-template-columns: 1fr; }
+            .skill-item { align-items: flex-start; }
+            .skill-circle { --size: 60px; }
+        }
+        @media (max-width: 480px) {
+            .skills-grid { grid-template-columns: 1fr; }
+            .skill-item { flex-direction: column; align-items: center; text-align: center; }
+            .skill-circle { --size: 50px; margin-bottom: 10px; }
+        }
+
+        /* Contact Page */
+        .contact-container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .contact-container h2 {
+            font-family: 'Orbitron', monospace;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+        }
+
+        body.dark-mode .contact-container h2 {
+            text-shadow: 0 0 15px rgba(96, 165, 250, 0.4);
+        }
+
+        .contact-form {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
+        }
+
+        body.dark-mode .form-group input:focus,
+        body.dark-mode .form-group textarea:focus {
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.1);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+        }
+
+        body.dark-mode .submit-btn:hover {
+            box-shadow: 0 10px 30px rgba(96, 165, 250, 0.2);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .social-link {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 20px;
+        }
+
+        .social-link:hover {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav { padding: 15px 20px; }
+            .hamburger { display: block; }
+            .nav-links { display: none; }
+            .nav-links.mobile {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid var(--border-color);
+                padding: 20px 0;
+            }
+            body.dark-mode .nav-links.mobile {
+                background: rgba(15, 23, 42, 0.95);
+            }
+            .nav-links.mobile .nav-link {
+                padding: 15px 20px;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .page { padding: 80px 20px 20px; }
+            .about-container { gap: 40px; }
+            .projects-grid { grid-template-columns: 1fr; }
+        
+            .photo-frame {
+                width: 200px;
+                height: 200px;
+            }
+
+            .photo {
+                font-size: 40px;
+            }
+            .film-roll { height: 150px; }
+            .certificate { width: 150px; height: 112px; }
+            .hero-tagline { font-size: 1.2rem; }
+            .enter-grid-btn { font-size: 1rem; padding: 12px 25px; }
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 100px;
+            right: 50px;
+            width: 60px;
+            height: 30px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: var(--accent);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle.dark::before {
+            transform: translateX(26px);
+        }
+
+
+
+        .console-header {
+            background: var(--accent);
+            color: white;
+            padding: 10px 15px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .console-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .console-body {
+            padding: 15px;
+            height: calc(100% - 50px);
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .console-output {
+            height: 200px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding: 5px;
+            background: var(--bg-secondary);
+            border-radius: 5px;
+            color: var(--text-primary);
+        }
+
+        .console-input-container {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .console-prompt {
+            color: var(--accent);
+            margin-right: 5px;
+        }
+
+        .console-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .console-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--accent);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 9999;
+            transition: all 0.3s ease;
+            animation: consolePulse 3s infinite;
+        }
+
+        .console-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes consolePulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(37, 99, 235, 0.5); }
+        }
+
+        @keyframes consolePulseDark {
+            0%, 100% { box-shadow: 0 0 20px rgba(96, 165, 250, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(96, 165, 250, 0.5); }
+        }
+
+        body.dark-mode .console-toggle {
+            animation-name: consolePulseDark;
+        }
+
+        /* 3D Profile Cards */
+        .profile-3d {
+            width: 100%;
+            height: 150px;
+            perspective: 1000px;
+            margin: 10px 0;
+        }
+
+        .profile-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+
+        .profile-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .profile-front, .profile-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .profile-front {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--accent);
+        }
+
+        .profile-back {
+            background: var(--accent);
+            border: 1px solid var(--accent);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        /* Next-page arrow button */
+        .next-page-btn {
+            position: fixed;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--accent);
+            display: grid; place-items: center;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.1);
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .next-page-btn:hover {
+            transform: translateX(-50%) scale(1.03);
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.2);
+            background: var(--accent);
+            color: white;
+        }
+        body.dark-mode .next-page-btn {
+            box-shadow: 0 6px 16px rgba(96, 165, 250, 0.1);
+        }
+        body.dark-mode .next-page-btn:hover {
+            box-shadow: 0 10px 24px rgba(96, 165, 250, 0.2);
+        }
+        .next-page-btn.hidden {
+            opacity: 0; pointer-events: none; transform: translateX(-50%) scale(0.92);
+        }
+        .next-page-btn .arrow {
+            width: 0; height: 0;
+            border-top: 12px solid currentColor;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Console */
+        .quantum-console {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            height: 300px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            z-index: 10000;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.3s ease;
+            opacity: 0;
+        }
+        .quantum-console.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        .console-header {
+            background: var(--accent);
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .console-body {
+            height: calc(100% - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+        .console-output {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+        .console-input-container {
+            display: flex;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+        .console-prompt {
+            color: var(--accent);
+        }
+        .console-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+        }
+        .console-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Popup */
+        .popup {
+            position: absolute;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Nav active */
+        .nav-link.active {
+            color: var(--accent);
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Texts -->
+    <div class="background-texts">
+        <div class="cyber">cyber</div>
+        <div class="security">security</div>
+        <div class="analyst">analyst</div>
+    </div>
+
+    <!-- Next Page Button -->
+    <button class="next-page-btn" onclick="nextPage()" aria-label="Next section"><span class="arrow"></span></button>
+
+    <!-- Particles Background -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="logo">VIBE CODER</div>
+            <button class="hamburger" onclick="toggleMenu()">☰</button>
+            <div class="nav-links">
+                <a href="#home" class="nav-link" onclick="showPage('home')">Home</a>
+                <a href="#about" class="nav-link" onclick="showPage('about')">ME</a>
+                <a href="#projects" class="nav-link" onclick="showPage('projects')">MY WORKS</a>
+                <a href="#contact" class="nav-link" onclick="showPage('contact')">REACH ME</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()">🌙</div>
+
+    <!-- Interactive Console -->
+    <button class="console-toggle" onclick="toggleConsole()">⌨️</button>
+    <div class="quantum-console" id="quantum-console">
+        <div class="console-header">
+            QUANTUM CONSOLE v2.0
+            <button class="console-close" onclick="toggleConsole()">✕</button>
+        </div>
+        <div class="console-body">
+            <div class="console-output" id="console-output">
+Welcome to Quantum AI Assistant<br>
+Ask me about Prahil's skills, experience, projects, or anything cybersecurity-related!<br>
+Type 'help' for all available topics<br>
+>
+            </div>
+            <div class="console-input-container">
+                <span class="console-prompt">></span>
+                <input type="text" class="console-input" id="console-input" onkeypress="handleConsoleKey(event)">
+            </div>
+        </div>
+    </div>
+
+    <!-- Home Page -->
+    <div id="home" class="page active">
+        <div class="hero-section">
+            <h1 class="hero-name">PRAHIL A</h1>
+            <p class="hero-tagline">You are watching my creation</p>
+            <button class="enter-grid-btn" onclick="showPage('about')">Know me</button>
+
+        </div>
+    </div>
+
+    <!-- About Page -->
+    <div id="about" class="page">
+        <div class="about-container">
+            <div class="photo-container">
+                <div class="photo-frame">
+                    <div class="floating-film-roll">
+                        <div class="timeline-film">
+                            <div class="timeline-item" onmouseover="showPopup(this, 'Cybersecurity enthusiast with focus on web security and network Security')">
+                                <h3>Cybersecurity Analyst</h3>
+                                <p>Penetration Tester  | Security Analyst</p>
+                            </div>
+                            <div class="timeline-item" onmouseover="showPopup(this, 'Part time editor to enhance my creativity by using tools like VN Editor , Davinci Resolve')">
+                                <h3>Video Editor</h3>
+                                <p>Content Creator</p>
+                            </div>
+                            <div class="timeline-item" onmouseover="showPopup(this, 'Administrating and managing video content in a reputed Organization to improve its GROWTH')">
+                                <h3>Social Media Manager</h3>
+                                <p>Youtube | Instagram</p>
+                            </div>
+                            <div class="timeline-item" onmouseover="showPopup(this, 'Creating dashboards, backend systems ,implementing algorithms to create a product that stands unique')">
+                                <h3>Developer</h3>
+                                <p>WEB Development | Security Algorithms</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="floating-film-roll bottom">
+                        <div class="film-strip">
+                            <div class="certificate" onclick="showCertificateModal('er.png')">
+                                <img src="er.png" alt="ER"/>
+                            </div>
+                            <div class="certificate" onclick="showCertificateModal('we.jpeg')">
+                                <img src="we.jpeg" alt="WE"/>
+                            </div>
+                            <div class="certificate" onclick="showCertificateModal('certificate3.jpg')">
+                                <img src="HACK.jpeg" alt="Certificate 3"/>
+                            </div>
+                            <div class="certificate" onclick="showCertificateModal('certificate4.jpg')">
+                                <img src="certificate4.jpg" alt="Certificate 4"/>
+                            </div>
+                            <div class="certificate" onclick="showCertificateModal('certificate5.jpg')">
+                                <img src="certificate5.jpg" alt="Certificate 5"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="photo">
+                        <img src="IMG-20250705-WA0002.jpg" alt="Your Photo"/>
+                    </div>
+                    <div class="social-mini">
+                        <a class="social-mini-btn" href="mailto:prahilamalraj2005@gmail.com" title="Email">📧</a>
+                        <a class="social-mini-btn" href="https://www.linkedin.com/in/prahill101/" target="_blank" rel="noopener" title="LinkedIn">in</a>
+                        <a class="social-mini-btn" href="https://github.com/prahilamalraj/" target="_blank" rel="noopener" title="GitHub">🐙</a>
+                    </div>
+                </div>
+            </div>
+            <div class="info-section">
+                <div class="skills-section">
+                    <div class="skills-grid">
+                        <div class="skill-item" onclick="showSkillModal('Metasploit', 'A proficient penetration tester with a strong grasp of the Metasploit Framework. I specialize in identifying, exploiting, and validating system vulnerabilities to assess and improve an organization\'s security posture.')">
+                            <div class="skill-circle" style="--percent: 90%;">
+                                <img src="metasploit.jpg" alt="skill photo">
+                                <span>90%</span>
+                            </div>
+                            <div class="skill-text">
+                                <div class="skill-name">Metasploit</div>
+                                <div class="skill-bar"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="skill-item" onclick="showSkillModal('Python', 'A proficient developer with a strong grasp of Python. I specialize in building scalable applications, automating complex workflows, and analyzing data to create clean, efficient, and maintainable solutions.')">
+                            <div class="skill-circle" style="--percent: 85%;">
+                                <img src="python.png" alt="skill photo">
+                                <span>25%</span>
+                            </div>
+                            <div class="skill-text">
+                                <div class="skill-name">Python</div>
+                                <div class="skill-bar"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="skill-item" onclick="showSkillModal('NMAP', 'A proficient analyst with a strong grasp of Nmap. I specialize in network discovery, port scanning, and service enumeration to map network architectures and uncover potential security weaknesses.')">
+                            <div class="skill-circle" style="--percent: 80%;">
+                                <img src="nmap.jpg" alt="skill photo">
+                                <span>30%</span>
+                            </div>
+                            <div class="skill-text">
+                                <div class="skill-name">NMap</div>
+                                <div class="skill-bar"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="skill-item" onclick="showSkillModal('kali Linux', 'A proficient cybersecurity professional with a strong grasp of the Kali Linux environment. I specialize in leveraging its vast toolset for penetration testing, vulnerability analysis, and security auditing to simulate real-world attacks and strengthen defensive postures.')">
+                            <div class="skill-circle" style="--percent: 75%;">
+                                <img src="kali.png" alt="skill photo">
+                                <span>35%</span>
+                            </div>
+                            <div class="skill-text">
+                                <div class="skill-name">Kali Linux</div>
+                                <div class="skill-bar"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="skill-item" onclick="showSkillModal('Bash', 'A proficient command-line user with a strong grasp of Bash scripting. I specialize in automating repetitive tasks, manipulating text data, and managing Linux/Unix environments to improve efficiency and workflow.')">
+                            <div class="skill-circle" style="--percent: 70%;">
+                                <img src="bash.jpg" alt="skill photo">
+                                <span>5%</span>
+                            </div>
+                            <div class="skill-text">
+                                <div class="skill-name">Bash</div>
+                                <div class="skill-bar"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="skill-item" onclick="showSkillModal('Wireshark', 'A proficient network analyst with a strong grasp of Wireshark. I specialize in capturing, filtering, and dissecting network traffic to troubleshoot performance problems and investigate security incidents at the packet level.')">
+                            <div class="skill-circle" style="--percent: 65%;">
+                                <img src="wireshark.png" alt="skill photo">
+                                <span>15%</span>
+                            </div>
+                            <div class="skill-text">
+                                <div class="skill-name">wireshark</div>
+                                <div class="skill-bar"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="skill-item" onclick="showSkillModal('Burpsuite', 'A proficient web application security analyst with a strong grasp of Burp Suite. I specialize in intercepting web traffic, automating scans, and performing in-depth manual testing to discover and validate vulnerabilities in modern web applications.')">
+                            <div class="skill-circle" style="--percent: 60%;">
+                                <img src="burpsuite.jpg" alt="skill photo">
+                                <span>50%</span>
+                            </div>
+                            <div class="skill-text">
+                                <div class="skill-name">Burp Suite</div>
+                                <div class="skill-bar"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="skill-item" onclick="showSkillModal('VAPT', 'A proficient cybersecurity professional with a strong grasp of VAPT methodologies. I specialize in conducting comprehensive security assessments, from automated vulnerability scanning to manual penetration testing, to identify, quantify, and remediate risks across an organization\'s digital infrastructure.')">
+                            <div class="skill-circle" style="--percent: 55%;">
+                                <img src="vapt.png" alt="skill photo">
+                                <span>10%</span>
+                            </div>
+                            <div class="skill-text">
+                                <div class="skill-name">VAPT</div>
+                                <div class="skill-bar"><span></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="personal-info">
+                    <div class="personal-content">
+                        <div class="personal-item"><strong>Name:</strong> Prahil A</div>
+                        <div class="personal-item"><strong>College:</strong> Prathyusha Engineering College</div>
+                        <div class="personal-item"><strong>CGPA:</strong> 8.2 / 10 </div>
+                        <div class="personal-item"><strong>Location:</strong> Tenkasi, India</div>
+                        <div class="personal-item"><strong>Email:</strong> prahilamalraj2005@gmail.com</div>
+                        <div class="personal-item"><strong>Contact Number:</strong>+91 9360038296</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Page -->
+    <div id="projects" class="page">
+        <div class="projects-grid">
+            <div class="project-card" onclick="window.open('https://github.com/prahilamalraj/Phishing-Email-Detector/')">
+                <h3>NLP Based Phishing Detection System</h3>
+                <p>A comprehensive security threat detection system. Specifically focused on email attacks as due to increase in use of email communication</p>
+                <div class="tech-stack">Python , NLP</div>
+
+            </div>
+            
+            <div class="project-card" onclick="window.open('https://github.com/prahilamalraj/Port-Scanner')">
+                <h3> Basic Port Scanner </h3>
+                <p>This Python script is a basic network scanner designed to probe a target computer. It takes a hostname you provide, like a website address, and finds its corresponding IP address. The program then systematically attempts to establish a connection to a specific range of digital ports, from 50 to 84. A successful connection indicates that the port is "open," meaning a service is actively listening. </p>
+                <div class="tech-stack">Python</div>
+            </div>
+            
+            <div class="project-card" onclick="window.open('https://github.com/prahilamalraj/IDS')">
+                <h3>Intrution Detection System</h3>
+                <p>This script builds a fraud detection system, not an intrusion detection system (IDS). An IDS monitors network traffic for malicious activity like hacking attempts, whereas this code analyzes a dataset of financial transactions to identify and flag fraudulent ones.</p>
+                <div class="tech-stack">Python, Pandas, Sci-kit Learn, Keras</div>
+            </div>
+            
+           
+        </div>
+    </div>
+
+
+    <!-- Skills Page -->
+
+
+    <!-- Contact Page -->
+    <div id="contact" class="page">
+        <div class="contact-container">
+            <h2>Reach Me</h2>
+            <form class="contact-form" onsubmit="sendMessage(event)">
+                <div class="form-group">
+                    <input type="text" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="Your Message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="enter-grid-btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Popup for tooltips -->
+    <div id="popup" class="popup" style="display: none;"></div>
+
+    <!-- Certificate Modal -->
+    <div id="certificate-modal" class="certificate-modal">
+        <button class="close-btn" onclick="closeCertificateModal()">×</button>
+        <img id="certificate-img" src="" alt="Certificate"/>
+    </div>
+
+    <!-- Skill Modal -->
+    <div id="skill-modal" class="skill-modal">
+        <button class="close-btn" onclick="closeSkillModal()">×</button>
+        <h3 id="skill-title"></h3>
+        <p id="skill-description"></p>
+    </div>
+
+    <script>
+        // Page management
+        const pages = ['home', 'about', 'projects', 'contact'];
+        let currentPageIndex = 0;
+
+        function showPage(pageId) {
+            window.scrollTo(0, 0);
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            const link = document.querySelector(`.nav-link[href="#${pageId}"]`);
+            if (link) link.classList.add('active');
+            document.querySelector('.nav-links').classList.remove('mobile');
+
+            currentPageIndex = pages.indexOf(pageId);
+
+            // Update next page button visibility
+            setTimeout(updateNextPageButton, 100);
+
+            // Animate skill bars when about page is shown (skills are now in about)
+            if (pageId === 'about') {
+                setTimeout(() => {
+                    document.querySelectorAll('.skill-bar > span').forEach(span => {
+                        const circle = span.closest('.skill-item').querySelector('.skill-circle');
+                        const percentText = circle.querySelector('span').textContent;
+                        const percentValue = parseInt(percentText);
+                        span.style.width = percentValue + '%';
+                    });
+                }, 300);
+            }
+        }
+
+        function nextPage() {
+            currentPageIndex = (currentPageIndex + 1) % pages.length;
+            showPage(pages[currentPageIndex]);
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const toggle = document.querySelector('.theme-toggle');
+            toggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        // Console toggle
+        function toggleConsole() {
+            const console = document.getElementById('quantum-console');
+            console.classList.toggle('active');
+            console.log('Console toggled:', console.classList.contains('active'));
+        }
+
+        // Certificate modal
+        function showCertificateModal(src) {
+            const modal = document.getElementById('certificate-modal');
+            const img = document.getElementById('certificate-img');
+            img.src = src;
+            modal.classList.add('active');
+        }
+
+        function closeCertificateModal() {
+            const modal = document.getElementById('certificate-modal');
+            modal.classList.remove('active');
+        }
+
+        // Skill modal
+        function showSkillModal(title, description) {
+            const modal = document.getElementById('skill-modal');
+            const titleEl = document.getElementById('skill-title');
+            const descEl = document.getElementById('skill-description');
+            titleEl.textContent = title;
+            descEl.textContent = description;
+            modal.classList.add('active');
+        }
+
+        function closeSkillModal() {
+            const modal = document.getElementById('skill-modal');
+            modal.classList.remove('active');
+        }
+
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('mobile');
+        }
+
+        // Shuffle skills every 10 seconds
+        setInterval(() => {
+            const skillsGrid = document.querySelector('.skills-grid');
+            if (skillsGrid && document.getElementById('about').classList.contains('active')) {
+                const items = Array.from(skillsGrid.children);
+                const shuffled = items.sort(() => Math.random() - 0.5);
+                shuffled.forEach(item => skillsGrid.appendChild(item));
+            }
+        }, 10000);
+
+
+
+        // Next page button visibility based on scroll within active page
+        function updateNextPageButton() {
+            const btn = document.querySelector('.next-page-btn');
+            const activePage = document.querySelector('.page.active');
+            
+            if (!activePage) {
+                btn.style.opacity = '0';
+                btn.style.pointerEvents = 'none';
+                return;
+            }
+
+            const scrollPosition = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            
+            // Calculate how close we are to the bottom of the page
+            const scrolledToBottom = scrollPosition + windowHeight >= documentHeight - 100;
+            
+            // Show button when near the bottom of the page content
+            if (scrolledToBottom) {
+                btn.style.opacity = '0.7';
+                btn.style.pointerEvents = 'auto';
+            } else {
+                btn.style.opacity = '0';
+                btn.style.pointerEvents = 'none';
+            }
+        }
+
+        window.addEventListener('scroll', updateNextPageButton);
+        window.addEventListener('resize', updateNextPageButton);
+
+
+
+
+
+        // Project open with detailed information
+        function openProject(id) {
+            const projects = {
+                1: {
+                    title: "🔒 Cybersecurity Dashboard",
+                    description: "A comprehensive security monitoring platform featuring:\n\n• Real-time threat detection and analysis\n• Identity & Access Management (IAM) integration\n• Compliance reporting for GDPR and HIPAA\n• Automated vulnerability assessments\n• Security incident response workflows\n\nTech Stack: React, Node.js, AWS IAM, MongoDB, Docker"
+                },
+                2: {
+                    title: "☁️ AWS Cloud Infrastructure",
+                    description: "Scalable cloud architecture solution including:\n\n• Auto-scaling EC2 instances\n• Load balancing and high availability\n• Serverless Lambda functions\n• S3 storage optimization\n• CloudFormation infrastructure as code\n• Cost optimization strategies\n\nTech Stack: AWS EC2, Lambda, S3, CloudFormation, CloudWatch"
+                },
+                3: {
+                    title: "🌐 Network Security Analyzer",
+                    description: "Advanced network monitoring and security tool:\n\n• Real-time packet analysis\n• Intrusion detection system (IDS)\n• Automated vulnerability scanning\n• Network topology mapping\n• Security alerts and notifications\n• Compliance monitoring\n\nTech Stack: Python, Wireshark, Nmap, Docker, Elasticsearch"
+                },
+                4: {
+                    title: "🚗 Smart Car Management System",
+                    description: "IoT-based vehicle management platform:\n\n• Real-time GPS tracking\n• Maintenance scheduling and alerts\n• Fleet optimization algorithms\n• Driver behavior analysis\n• Fuel consumption monitoring\n• Mobile app for remote control\n\nTech Stack: IoT sensors, GPS API, React Native, Firebase, Node.js"
+                }
+            };
+            
+            const project = projects[id];
+            if (project) {
+                alert(`${project.title}\n\n${project.description}`);
+            } else {
+                alert('Project details coming soon!');
+            }
+        }
+
+        // Popup for timeline items
+        function showPopup(element, text) {
+            const popup = document.getElementById('popup');
+            popup.textContent = text;
+            popup.style.display = 'block';
+            const rect = element.getBoundingClientRect();
+            popup.style.left = rect.left + (rect.width / 2) - (popup.offsetWidth / 2) + 'px';
+            popup.style.top = (rect.top - popup.offsetHeight - 10) + 'px';
+            element.onmouseout = () => {
+                popup.style.display = 'none';
+            };
+        }
+
+        // Chatbot responses
+        const responses = {
+            'hello': 'Hello! I\'m the Quantum AI Assistant. How can I help you today?',
+            'hi': 'Hi there! Ready to explore Prahil\'s portfolio?',
+            'who is prahil': 'Prahil A is a talented Cybersecurity Specialist, Cloud Architect, AI/ML Engineer, and SSC Mentor. Check out the About page for more details!',
+            'cybersecurity': 'Prahil specializes in Identity & Access Management (IAM), cloud security, and secure authentication systems. He ensures compliance with standards like GDPR and HIPAA.',
+            'aws': 'Prahil is an AWS Solutions Architect with expertise in cloud infrastructure and serverless computing. He designs scalable and secure cloud solutions.',
+            'ai': 'Prahil is passionate about AI/ML, working on innovative projects and hackathon solutions. He loves automation and machine learning applications.',
+            'skills': 'Prahil has expertise in Cybersecurity (90%), AWS Cloud (85%), AI/ML (80%), and JavaScript (75%). Visit the Skills page to see more!',
+            'projects': 'Prahil has worked on cybersecurity projects with IAM integration, using technologies like React, Node.js, and AWS. Check the Projects page!',
+            'contact': 'You can reach Prahil via email, LinkedIn, or GitHub. Links are available on the Contact page.',
+            'experience': 'Prahil has hands-on experience in cloud architecture, cybersecurity implementations, AI/ML projects, and educational mentoring. He\'s worked on real-world applications and hackathons.',
+            'certifications': 'Prahil holds certifications in AWS, cybersecurity, and has participated in various tech programs. Check the certificates section for details!',
+            'education': 'Prahil has a strong educational background with expertise in computer science, cybersecurity, and cloud technologies.',
+            'languages': 'Prahil is proficient in JavaScript, Python, and various cloud technologies. He also has experience with frameworks like React and Node.js.',
+            'hire': 'Interested in hiring Prahil? Contact him through the Contact page or LinkedIn for collaboration opportunities!',
+            'work': 'Prahil is available for cybersecurity consulting, cloud architecture projects, AI/ML development, and educational mentoring.',
+            'portfolio': 'This is Prahil\'s portfolio! Navigate through the sections to learn more about his skills, projects, and background.',
+            'about': 'Learn more about Prahil on the About page - his background, skills, and experience as a cybersecurity and cloud expert.',
+            'help': 'Available topics: hello, who is prahil, cybersecurity, aws, ai, skills, projects, contact, experience, certifications, education, languages, hire, portfolio, instagram, github, clear',
+            'instagram': 'Opening Instagram...',
+            'facebook': 'Opening Facebook...',
+            'github': 'Opening GitHub...',
+            'clear': 'Console cleared. Welcome back!',
+        };
+
+        function getChatbotResponse(message) {
+            const lowerMsg = message.toLowerCase();
+            for (let key in responses) {
+                if (lowerMsg.includes(key)) {
+                    if (key === 'instagram') window.open('https://instagram.com/prahilamalraj', '_blank');
+                    if (key === 'facebook') window.open('https://facebook.com/YOUR_HANDLE', '_blank');
+                    if (key === 'github') window.open('https://github.com/prahilamalraj', '_blank');
+                    return responses[key];
+                }
+            }
+            return 'I\'m not sure about that. Try asking about cybersecurity, AWS, AI, or type \'help\' for commands!';
+        }
+
+        // Console handling
+        function handleConsoleKey(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('console-input');
+                const output = document.getElementById('console-output');
+                const message = input.value.trim();
+                if (!message) return;
+                output.innerHTML += '<br>> ' + message;
+                const response = getChatbotResponse(message);
+                output.innerHTML += '<br>AI: ' + response;
+                if (message.toLowerCase() === 'clear') {
+                    output.innerHTML = 'Welcome to Quantum AI Assistant<br>Ask me anything about Prahil\'s portfolio or cybersecurity!<br>Type \'help\' for available commands<br>>';
+                }
+                input.value = '';
+                output.scrollTop = output.scrollHeight;
+            }
+        }
+
+        // Contact form (placeholder)
+        function sendMessage(event) {
+            event.preventDefault();
+            alert('Message sent! This is a placeholder.');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('home');
+        });
+    </script>
+</body>
+</html>
